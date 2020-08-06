@@ -46,7 +46,7 @@ class PostmanParser(object):
     def parse_each_item(self, item, variable=[]):
         """ parse each item in postman to testcase in httprunner
         """
-        api = dict(config=dict(base_url=''), teststeps=[])
+        api = dict(config=dict(base_url='${base_url}'), teststeps=[])
         api['config']["name"] = item["name"]
         api['config']["variables"] = dict()
 
