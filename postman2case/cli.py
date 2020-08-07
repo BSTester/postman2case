@@ -53,8 +53,8 @@ def main():
         output_dir = '.'
 
     postman_parser = PostmanParser(postman_testset_file)
-    parse_result = postman_parser.parse_data()
-    postman_parser.save(parse_result, output_dir, output_file_type=output_file_type)
+    parse_result, name = postman_parser.parse_data()
+    postman_parser.save(parse_result, output_dir, output_file_type=output_file_type, name=name)
 
     return 0
 

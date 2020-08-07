@@ -120,13 +120,14 @@ class PostmanParser(object):
         postman_data = self.read_postman_data()
 
         result = self.parse_items(postman_data["item"], postman_data.get('info', {}).get('name'), postman_data.get('variable', []))
-        return result
+        return result, postman_data.get('info', {}).get('name')
 
-    def save(self, data, output_dir, output_file_type="json"):
+    def save(self, data, output_dir, output_file_type="json", name=''):
         count = 0
         output_dir = os.path.join(output_dir, "testcases")
         if not os.path.exists(output_dir):
             os.makedirs(output_dir)
+        test_suites = dict(config=dict(name=name, variables=dict(base_url='')), testcases=[])
         for each_api in data:
             count += 1
             file_name = "{}.{}".format(each_api.get('config').get('name'), output_file_type)
@@ -153,6 +154,21 @@ class PostmanParser(object):
                 with io.open(file_path, 'w', encoding="utf-8") as outfile:
                     my_json_str = json.dumps(each_api, ensure_ascii=ensure_ascii, indent=4)
                     yaml.dump(each_api, outfile, allow_unicode=True, default_flow_style=False, indent=4)
-                    
+            test_suites['testcases'].append(dict(name=each_api.get('config').get('name'), testcase=file_path))    
             logging.info("Generate JSON testset successfully: {}".format(file_path))
-            
+        if test_suites.get('testcases'):
+            folder_path = os.path.join(output_dir, test_suites.get('config').get('name'))
+            file_name = "{}_testSuite.{}".format(test_suites.get('config').get('name'), output_file_type)
+            file_path = os.path.join(folder_path, file_name)
+            if output_file_type == "json":
+                with io.open(file_path, 'w', encoding="utf-8") as outfile:
+                    my_json_str = json.dumps(test_suites, ensure_ascii=ensure_ascii, indent=4)
+                    if isinstance(my_json_str, bytes):
+                        my_json_str = my_json_str.decode("utf-8")
+
+                    outfile.write(my_json_str)
+            else:
+                with io.open(file_path, 'w', encoding="utf-8") as outfile:
+                    my_json_str = json.dumps(test_suites, ensure_ascii=ensure_ascii, indent=4)
+                    yaml.dump(test_suites, outfile, allow_unicode=True, default_flow_style=False, indent=4)
+            logging.info("Generate testsuite successfully: {}".format(file_path))
