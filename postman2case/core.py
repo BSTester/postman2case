@@ -89,7 +89,7 @@ class PostmanParser(object):
                             api['config']["variables"][v[2:-2]] = ''
                             mode_body = mode_body.replace(v, '${{{}}}'.format(v[2:-2]))
                         body = json.loads(mode_body, encoding='utf8')
-                    except expression as identifier:
+                    except Exception as e:
                         body = mode_body
             request["data"] = body
 
