@@ -119,7 +119,7 @@ class PostmanParser(object):
         logging.info("Start to generate JSON testset.")
         postman_data = self.read_postman_data()
 
-        result = self.parse_items(postman_data["item"], None, postman_data.get('variable', []))
+        result = self.parse_items(postman_data["item"], postman_data.get('info', {}).get('name'), postman_data.get('variable', []))
         return result
 
     def save(self, data, output_dir, output_file_type="json"):
