@@ -130,7 +130,7 @@ class PostmanParser(object):
         test_suites = dict(config=dict(name=name, variables=dict(base_url='')), testcases=[])
         for each_api in data:
             count += 1
-            file_name = "{}.{}".format(each_api.get('config').get('name'), output_file_type)
+            file_name = "{}.{}".format(count, output_file_type)
             
             folder_name = each_api.pop("folder_name")
             if folder_name:
