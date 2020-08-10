@@ -157,7 +157,7 @@ class PostmanParser(object):
             test_suites['testcases'].append(dict(name=each_api.get('config').get('name'), testcase=file_path))    
             logging.info("Generate JSON testset successfully: {}".format(file_path))
         if test_suites.get('testcases'):
-            folder_path = os.path.join(output_dir, test_suites.get('config').get('name'))
+            folder_path = os.path.join(output_dir)
             file_name = "{}_testSuite.{}".format(test_suites.get('config').get('name'), output_file_type)
             file_path = os.path.join(folder_path, file_name)
             if output_file_type == "json":
