@@ -154,7 +154,7 @@ class PostmanParser(object):
                 with io.open(file_path, 'w', encoding="utf-8") as outfile:
                     my_json_str = json.dumps(each_api, ensure_ascii=ensure_ascii, indent=4)
                     yaml.dump(each_api, outfile, allow_unicode=True, default_flow_style=False, indent=4)
-            test_suites['testcases'].append(dict(name=each_api.get('config').get('name'), testcase=file_path))    
+            test_suites['testcases'].append(dict(name=each_api.get('config').get('name'), testcase=file_path.replace('\\', '/')))    
             logging.info("Generate JSON testset successfully: {}".format(file_path))
         if test_suites.get('testcases'):
             folder_path = os.path.join(output_dir)
