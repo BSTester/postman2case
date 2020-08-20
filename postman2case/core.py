@@ -91,7 +91,10 @@ class PostmanParser(object):
                         body = json.loads(mode_body, encoding='utf8')
                     except Exception as e:
                         body = mode_body
-            request["data"] = body
+            if isinstance(body, dict):
+                request["json"] = body
+            else:
+                request["data"] = body
 
         for var in variable:
             if var.get('key'): api['config']["variables"][var.get('key')] = var.get('value')
