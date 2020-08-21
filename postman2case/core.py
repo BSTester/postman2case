@@ -95,7 +95,7 @@ class PostmanParser(object):
 
         for var in variable:
             if var.get('key'): api['config']["variables"][var.get('key')] = var.get('value')
-        api["teststeps"].append(dict(name=url, request=request, validate=[dict(eq=['status_code', 200])]))
+        api["teststeps"].append(dict(name=url, request=request, validate=[dict(eq=['status_code', 200]), dict(eq=['body.code', 0])]))
         return api
     
     def parse_items(self, items, folder_name=None, variable=[]):
@@ -158,7 +158,7 @@ class PostmanParser(object):
             logging.info("Generate JSON testset successfully: {}".format(file_path))
         if test_suites.get('testcases'):
             folder_path = os.path.join(output_dir)
-            file_name = "{}_testSuite.{}".format(test_suites.get('config').get('name'), output_file_type)
+            file_name = "TEST_{}_testSuite.{}".format(test_suites.get('config').get('name'), output_file_type)
             file_path = os.path.join(folder_path, file_name)
             if output_file_type == "json":
                 with io.open(file_path, 'w', encoding="utf-8") as outfile:
