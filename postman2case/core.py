@@ -36,10 +36,10 @@ class PostmanParser(object):
             value = header["value"]
             for v in re.findall(r'\{\{.+?\}\}', key):
                 api['config']["variables"][v[2:-2]] = ''
-                key = key.replace(v, '${{{}}}'.format(v[2:-2]))
+                key = key.replace(v, '${}'.format(v[2:-2]))
             for v in re.findall(r'\{\{.+?\}\}', value):
                 api['config']["variables"][v[2:-2]] = ''
-                value = value.replace(v, '${{{}}}'.format(v[2:-2]))
+                value = value.replace(v, '${}'.format(v[2:-2]))
             headers[key] = value
         return headers
 
@@ -63,12 +63,12 @@ class PostmanParser(object):
             if "query" in item["request"]["url"].keys():
                 for query in item["request"]["url"]["query"]:
                     api['config']["variables"][query["key"]] = parse_value_from_type(query["value"], api)
-                    body[query["key"]] = "${{{}}}".format(query["key"])
+                    body[query["key"]] = "${}".format(query["key"])
             request["params"] = body
         else:
             for v in re.findall(r'\{\{.+?\}\}', url):
                 api['config']["variables"][v[2:-2]] = ''
-                url = url.replace(v, '${{{}}}'.format(v[2:-2]))
+                url = url.replace(v, '${}'.format(v[2:-2]))
             request["url"] = url
             request["headers"] = self.parse_header(item["request"]["header"], api)
 
@@ -81,13 +81,13 @@ class PostmanParser(object):
                             api['config']["variables"][param["key"]] = parse_value_from_type(param["value"], api)
                         else:
                             api['config']["variables"][param["key"]] = parse_value_from_type(param["src"], api)
-                        body[param["key"]] = "${{{}}}".format(param["key"])
+                        body[param["key"]] = "${}".format(param["key"])
                 elif isinstance(item["request"]["body"][mode], str):
                     try:
                         mode_body = item["request"]["body"][mode]
                         for v in re.findall(r'\{\{.+?\}\}', mode_body):
                             api['config']["variables"][v[2:-2]] = ''
-                            mode_body = mode_body.replace(v, '${{{}}}'.format(v[2:-2]))
+                            mode_body = mode_body.replace(v, '${}'.format(v[2:-2]))
                         body = json.loads(mode_body, encoding='utf8')
                     except Exception as e:
                         body = mode_body
