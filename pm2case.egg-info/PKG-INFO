@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: pm2case
-Version: 0.0.1
+Version: 0.0.2
 Summary: Convert POSTMAN data to JSON testcases for HttpRunner.
 Home-page: https://github.com/HttpRunner/postman2case
 Author: luguo
@@ -96,4 +96,5 @@ Classifier: Programming Language :: Python :: 3.5
 Classifier: Programming Language :: Python :: 3.6
 Classifier: Programming Language :: Python :: 3.7
 Classifier: Programming Language :: Python :: 3.8
+Classifier: Programming Language :: Python :: 3.9
 Description-Content-Type: text/markdown
