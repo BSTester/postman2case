@@ -4,7 +4,7 @@ import logging
 import os
 import yaml
 import re
-from collections import OrderedDict
+from urllib.parse import urlsplit
 
 from postman2case.compat import ensure_ascii
 from postman2case.parser import parse_value_from_type
@@ -54,9 +54,11 @@ class PostmanParser(object):
         request["method"] = item["request"]["method"]
 
         url = self.parse_url(item["request"]["url"])
+        url_split = urlsplit(url)
+        api['config']["base_url"] = '{}://{}'.format(url_split.scheme, url_split.netloc)
+        request["url"] = url_split.path
 
         if request["method"] == "GET":
-            request["url"] = url.split("?")[0]
             request["headers"] = self.parse_header(item["request"]["header"], api)
 
             body = {}
@@ -69,7 +71,6 @@ class PostmanParser(object):
             for v in re.findall(r'\{\{.+?\}\}', url):
                 api['config']["variables"][v[2:-2]] = ''
                 url = url.replace(v, '${}'.format(v[2:-2]))
-            request["url"] = url
             request["headers"] = self.parse_header(item["request"]["header"], api)
 
             body = {}
@@ -88,10 +89,10 @@ class PostmanParser(object):
                         for v in re.findall(r'\{\{.+?\}\}', mode_body):
                             api['config']["variables"][v[2:-2]] = ''
                             mode_body = mode_body.replace(v, '${}'.format(v[2:-2]))
-                        body = json.loads(mode_body, encoding='utf8')
+                        body = json.loads(mode_body)
                     except Exception as e:
                         body = mode_body
-            if isinstance(body, dict):
+            if isinstance(body, dict) or request["headers"].get('Content-Type', '').find('json') >= 0:
                 request["json"] = body
             else:
                 request["data"] = body
@@ -119,13 +120,13 @@ class PostmanParser(object):
     def parse_data(self):
         """ dump postman data to json testset
         """
-        logging.info("Start to generate JSON testset.")
+        logging.info("Start to generate yaml testset.")
         postman_data = self.read_postman_data()
 
         result = self.parse_items(postman_data["item"], postman_data.get('info', {}).get('name'), postman_data.get('variable', []))
         return result, postman_data.get('info', {}).get('name')
 
-    def save(self, data, output_dir, output_file_type="json", name=''):
+    def save(self, data, output_dir, output_file_type="yaml", name=''):
         count = 0
         output_dir = os.path.join(output_dir, "TestCases", "APICase")
         if not os.path.exists(output_dir):
