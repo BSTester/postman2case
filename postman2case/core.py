@@ -73,7 +73,7 @@ class PostmanParser(object):
                 url = url.replace(v, '${}'.format(v[2:-2]))
             request["headers"] = self.parse_header(item["request"]["header"], api)
 
-            body = {}
+            body = item["request"].get("body") or {}
             if item["request"].get("body") and item["request"]["body"] != {}:
                 mode = item["request"]["body"]["mode"]
                 if isinstance(item["request"]["body"][mode], list):
@@ -92,10 +92,15 @@ class PostmanParser(object):
                         body = json.loads(mode_body)
                     except Exception as e:
                         body = mode_body
-            if isinstance(body, dict) or request["headers"].get('Content-Type', '').find('json') >= 0:
-                request["json"] = body
-            else:
+            if not request["headers"].get('Content-Type'):
+                if isinstance(body, (dict, list)):
+                    request["json"] = body
+                else:
+                    request["data"] = body
+            elif request["headers"].get('Content-Type').find('json') < 0:
                 request["data"] = body
+            else:
+                request["json"] = body
 
         for var in variable:
             if var.get('key'): api['config']["variables"][var.get('key')] = var.get('value')
