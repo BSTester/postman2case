@@ -9,7 +9,7 @@ from postman2case.core import PostmanParser
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Convert postman testcases to JSON testcases for HttpRunner.")
+        description="Convert postman testcases to yaml testcases for HttpRunner.")
     parser.add_argument("-V", "--version", dest='version', action='store_true',
         help="show version")
     parser.add_argument('--log-level', default='INFO',
