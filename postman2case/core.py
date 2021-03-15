@@ -104,7 +104,7 @@ class PostmanParser(object):
 
         for var in variable:
             if var.get('key'): api['config']["variables"][var.get('key')] = var.get('value')
-        api["teststeps"].append(dict(name=url, request=request, validate=[dict(eq=['status_code', 200]), dict(eq=['body.code', 0])]))
+        api["teststeps"].append(dict(name=url, request=request, validate=[dict(eq=['status_code', 200])]))
         return api
     
     def parse_items(self, items, folder_name=None, variable=[]):
@@ -131,7 +131,7 @@ class PostmanParser(object):
         result = self.parse_items(postman_data["item"], postman_data.get('info', {}).get('name'), postman_data.get('variable', []))
         return result, postman_data.get('info', {}).get('name')
 
-    def save(self, data, output_dir, output_file_type="yaml", name=''):
+    def save(self, data, output_dir, output_file_type="yml", name=''):
         count = 0
         output_dir = os.path.join(output_dir, "TestCases", "APICase")
         if not os.path.exists(output_dir):
