@@ -20,13 +20,16 @@ class PostmanParser(object):
 
         return postman_data
     
-    def parse_url(self, request_url):
+    def parse_url(self, request_url, api):
         url = ""
         if isinstance(request_url, str):
             url = request_url
         elif isinstance(request_url, dict):
             if "raw" in request_url.keys():
                 url= request_url["raw"]
+        for v in re.findall(r'\{\{.+?\}\}', url):
+            api['config']["variables"][v[2:-2]] = ''
+            url = url.replace(v, '${}'.format(v[2:-2]))
         return url
     
     def parse_header(self, request_header, api):
@@ -53,7 +56,7 @@ class PostmanParser(object):
         request = {}
         request["method"] = item["request"]["method"]
 
-        url = self.parse_url(item["request"]["url"])
+        url = self.parse_url(item["request"]["url"], api)
         url_split = urlsplit(url)
         api['config']["base_url"] = '{}://{}'.format(url_split.scheme, url_split.netloc)
         request["url"] = url_split.path
