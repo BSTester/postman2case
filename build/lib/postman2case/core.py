@@ -58,7 +58,7 @@ class PostmanParser(object):
 
         url = self.parse_url(item["request"]["url"], api)
         url_split = urlsplit(url)
-        api['config']["base_url"] = '{}://{}'.format(url_split.scheme, url_split.netloc)
+        api['config']["base_url"] = '{}://{}'.format(url_split.scheme, url_split.netloc) if url_split.scheme and url_split.netloc else '$base_url'
         request["url"] = url_split.path
 
         if request["method"] == "GET":
